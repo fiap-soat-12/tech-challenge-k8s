@@ -44,11 +44,11 @@ jobs:
 
       - name: Plan Terraform for Cluster
         working-directory: terraform/cluster
-        run: terraform plan -out=tfplan
+        run: terraform plan -out=cluster
 
       - name: Apply Terraform for Cluster
         working-directory: terraform/cluster
-        run: terraform apply
+        run: terraform apply -auto-approve cluster
         
       # Inicializar, validar e aplicar o Terraform para o diretório infra
       - name: Initialize Terraform for Infra
@@ -65,4 +65,4 @@ jobs:
 
       - name: Apply Terraform for Infra
         working-directory: terraform/infra
-        run: terraform apply
+        run: terraform apply -auto-approve infra
