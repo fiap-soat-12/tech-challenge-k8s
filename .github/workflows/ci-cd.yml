@@ -32,7 +32,7 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.4.0
-
+        
       # Inicializar, validar e aplicar o Terraform para o diretório cluster
       - name: Initialize Terraform for Cluster
         working-directory: terraform/cluster
@@ -48,12 +48,15 @@ jobs:
 
       - name: Apply Terraform for Cluster
         working-directory: terraform/cluster
-        run: terraform apply -auto-approve tfplan
-
-      # Atualizar kubeconfig após a criação ou atualização do cluster
-      - name: Update kubeconfig for EKS
-        run: aws eks update-kubeconfig --name fiap-tech-challenge-eks-cluster --region us-east-1
-
+        run: |
+          if [[ "${{ steps.check_cluster.outputs.cluster_status }}" == "Cluster not found" ]]; then
+            echo "Cluster not found, creating a new one..."
+            terraform apply -auto-approve tfplan
+          else
+            echo "Cluster found, updating..."
+            terraform apply -auto-approve tfplan
+          fi
+        
       # Inicializar, validar e aplicar o Terraform para o diretório infra
       - name: Initialize Terraform for Infra
         working-directory: terraform/infra
@@ -69,4 +72,11 @@ jobs:
 
       - name: Apply Terraform for Infra
         working-directory: terraform/infra
-        run: terraform apply -auto-approve tfplan-infra
+        run: |
+          if [[ "${{ steps.check_infra.outputs.infra_status }}" == "Infra not found" ]]; then
+            echo "Infrastructure not found, creating a new one..."
+            terraform apply -auto-approve tfplan-infra
+          else
+            echo "Infrastructure found, updating..."
+            terraform apply -auto-approve tfplan-infra
+          fi
