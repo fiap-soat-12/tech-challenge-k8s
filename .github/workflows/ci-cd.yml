@@ -50,8 +50,12 @@ jobs:
         working-directory: terraform/cluster
         run: terraform apply -auto-approve tfplan
 
+      - name: Wait for EKS Cluster to be Ready
+        run: |
+          aws eks wait cluster-active --name fiap-soat-tech-challenge-k8s --region us-east-1
+
       - name: Update kubeconfig for EKS
-        run: aws eks update-kubeconfig --name techchallenge --region us-east-1
+        run: aws eks update-kubeconfig --name fiap-soat-tech-challenge-k8s --region us-east-1
 
       # Inicializar, validar e aplicar o Terraform para o diretório infra
       - name: Initialize Terraform for Infra
