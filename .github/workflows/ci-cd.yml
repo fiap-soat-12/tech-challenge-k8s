@@ -26,22 +26,16 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: us-east-1 # Ajuste para a região AWS desejada
-
-      - name: Install AWS CLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
+          aws-region: us-east-1
 
       - name: Update kubeconfig for EKS
-        run: aws eks update-kubeconfig --name <NOME_DO_CLUSTER> --region us-east-1
+        run: aws eks update-kubeconfig --name fiap-soat-tech-challenge-k8s --region us-east-1
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.4.0 # Ajuste para a versão do Terraform que você usa
-
+          terraform_version: 1.4.0
+          
       # Inicializar, validar e aplicar o Terraform para o diretório cluster
       - name: Initialize Terraform for Cluster
         working-directory: terraform/cluster
