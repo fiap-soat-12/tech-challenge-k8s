@@ -33,6 +33,7 @@ jobs:
         with:
           terraform_version: 1.4.0
 
+      # Inicializar, validar e aplicar o Terraform para o diretório cluster
       - name: Initialize Terraform for Cluster
         working-directory: terraform/cluster
         run: terraform init
@@ -48,24 +49,6 @@ jobs:
       - name: Apply Terraform for Cluster
         working-directory: terraform/cluster
         run: terraform apply -auto-approve tfplan
-
-      - name: Wait for EKS Cluster to be Ready
-        run: |
-          for i in {1..10}; do
-            echo "Verificando se o cluster EKS está ativo..."
-            if aws eks describe-cluster --name fiap-soat-tech-challenge-k8s --region us-east-1; then
-              echo "Cluster encontrado! Aguardando ativação..."
-              aws eks wait cluster-active --name fiap-soat-tech-challenge-k8s --region us-east-1
-              break
-            else
-              echo "Cluster não encontrado. Tentando novamente em 30 segundos..."
-              sleep 30
-            fi
-          done
-        shell: bash
-
-      - name: Update kubeconfig for EKS
-        run: aws eks update-kubeconfig --name fiap-soat-tech-challenge-k8s --region us-east-1
 
       # Inicializar, validar e aplicar o Terraform para o diretório infra
       - name: Initialize Terraform for Infra
