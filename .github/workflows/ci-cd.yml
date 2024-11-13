@@ -50,17 +50,9 @@ jobs:
         working-directory: terraform/cluster
         run: terraform apply -auto-approve tfplan
 
-      # Verificar se o cluster EKS existe, caso não, criar ou atualizar
-      - name: Check if EKS Cluster exists
-        run: |
-          CLUSTER_NAME="fiap-soat-tech-challenge-k8s"
-          if aws eks describe-cluster --name $CLUSTER_NAME --region us-east-1; then
-            echo "Cluster existe, atualizando..."
-            aws eks update-kubeconfig --name $CLUSTER_NAME --region us-east-1
-          else
-            echo "Cluster não encontrado, criando..."
-            terraform apply -auto-approve terraform/cluster
-          fi
+      # Atualizar kubeconfig após a criação ou atualização do cluster
+      - name: Update kubeconfig for EKS
+        run: aws eks update-kubeconfig --name fiap-tech-challenge-eks-cluster --region us-east-1
 
       # Inicializar, validar e aplicar o Terraform para o diretório infra
       - name: Initialize Terraform for Infra
