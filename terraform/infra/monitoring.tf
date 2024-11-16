@@ -1,5 +1,7 @@
-resource "kubernetes_manifest" "monitoring_namespaces" {
-  manifest = yamldecode(file("${path.module}/../../k8s/monitoring/namespace.yaml"))
+resource "kubernetes_namespace" "monitoring_namespaces" {
+  metadata {
+    name = "monitoring"
+  }
 }
 
 resource "helm_release" "kube-prometheus-stack" {
@@ -8,21 +10,31 @@ resource "helm_release" "kube-prometheus-stack" {
   chart      = "kube-prometheus-stack"
   repository = "https://prometheus-community.github.io/helm-charts"
   version    = "51.2.0"
-  values     = [file("${path.module}/../../k8s/monitoring/kube-prometheus-stack/values.yaml")]
+  values     = [file("${path.module}/charts/kube-prometheus-stack/values.yaml")]
 
   timeout = 600
 
   depends_on = [
-    kubernetes_manifest.monitoring_namespaces,
+    kubernetes_namespace.monitoring_namespaces,
     helm_release.metrics_server
   ]
 }
 
-resource "kubernetes_manifest" "grafana_configmaps" {
-  manifest = yamldecode(file("${path.module}/../../k8s/monitoring/grafana/configmap.yaml"))
+resource "kubernetes_config_map_v1" "grafana_configmaps" {
+  metadata {
+    name = "grafana-dashboards"
+    namespace = "monitoring"
+    labels = {
+      "grafana_dashboard": "1"
+    }
+  }
+
+  data = {
+    "default-dashboard.json" = "${file("${path.module}/charts/grafana/default_dashboard.json")}"
+  }
 
   depends_on = [
-    kubernetes_manifest.monitoring_namespaces
+    kubernetes_namespace.monitoring_namespaces
   ]
 }
 
@@ -32,21 +44,45 @@ resource "helm_release" "grafana" {
   chart      = "grafana"
   repository = "https://grafana.github.io/helm-charts"
   version    = "8.5.1"
-  values     = [file("${path.module}/../../k8s/monitoring/grafana/values.yaml")]
+  values     = [file("${path.module}/charts/grafana/values.yaml")]
 
   timeout = 600
 
   depends_on = [
-    kubernetes_manifest.monitoring_namespaces,
-    kubernetes_manifest.grafana_configmaps,
+    kubernetes_namespace.monitoring_namespaces,
+    kubernetes_config_map_v1.grafana_configmaps,
     helm_release.metrics_server
   ]
 }
 
-resource "kubernetes_manifest" "monitoring_ingress" {
-  manifest = yamldecode(file("${path.module}/../../k8s/monitoring/grafana/grafana-ingress.yaml"))
+resource "kubernetes_ingress_v1" "monitoring_ingress" {
+  metadata {
+    name      = "grafana-ingress"
+    namespace = "monitoring"
+  }
 
-  depends_on = [
-    helm_release.grafana
-  ]
+  spec {
+    ingress_class_name = "nginx"
+
+    rule {
+      http {
+        path {
+          path      = "/grafana"
+          path_type = "Prefix"
+
+          backend {
+            service {
+              name = "grafana"
+              port {
+                number = 80
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  depends_on = [helm_release.grafana]
+
 }

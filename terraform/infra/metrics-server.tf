@@ -7,5 +7,5 @@ resource "helm_release" "metrics_server" {
 
   timeout = 600
 
-  values = [file("${path.module}/../../k8s/kube-system/values.yaml")]
+  values = [file("${path.module}/charts/metrics-server/values.yaml")]
 }
