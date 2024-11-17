@@ -13,9 +13,15 @@ resource "helm_release" "nginx_ingress" {
 
   values = [file("${path.module}/charts/ingress-nginx/values.yaml")]
 
+  set {
+    name  = "loadBalancerArn"
+    value = aws_lb.nginx_alb.arn
+  }
+
   timeout = 600
 
   depends_on = [
+    aws_lb.nginx_alb,
     kubernetes_namespace.ingress_nginx_namespaces,
     helm_release.metrics_server,
     helm_release.grafana,
