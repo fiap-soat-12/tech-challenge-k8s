@@ -15,13 +15,13 @@ resource "helm_release" "nginx_ingress" {
 
   set {
     name  = "loadBalancerArn"
-    value = aws_lb.nginx_alb.arn
+    value = aws_lb.app_lb.arn
   }
 
   timeout = 600
 
   depends_on = [
-    aws_lb.nginx_alb,
+    aws_lb.app_lb,
     kubernetes_namespace.ingress_nginx_namespaces,
     helm_release.metrics_server,
     helm_release.grafana,

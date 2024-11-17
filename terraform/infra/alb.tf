@@ -1,5 +1,5 @@
-resource "aws_lb" "nginx_alb" {
-  name                       = "tech-challenge-load-balancer"
+resource "aws_lb" "app_lb" {
+  name                       = "tech-challenge-alb"
   internal                   = false
   load_balancer_type         = "application"
   security_groups            = [aws_security_group.alb_sg.id]
@@ -8,7 +8,7 @@ resource "aws_lb" "nginx_alb" {
 }
 
 resource "aws_lb_listener" "http_listener" {
-  load_balancer_arn = aws_lb.nginx_alb.arn
+  load_balancer_arn = aws_lb.app_lb.arn
   port              = 80
   protocol          = "HTTP"
 
@@ -19,7 +19,7 @@ resource "aws_lb_listener" "http_listener" {
 }
 
 resource "aws_lb_target_group" "http_tg" {
-  name        = "http-target-group"
+  name        = "alb-http-target-group"
   port        = 30080
   protocol    = "HTTP"
   target_type = "ip"
