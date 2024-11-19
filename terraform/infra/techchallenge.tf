@@ -1,91 +1,247 @@
-resource "kubernetes_manifest" "techchallenge_namespaces" {
-  manifest = yamldecode(file("${path.module}/../../k8s/techchallenge/namespace.yaml"))
+resource "kubernetes_namespace" "techchallenge_namespaces" {
+  metadata {
+    name = "techchallenge"
+  }
 }
 
-resource "kubernetes_manifest" "techchallenge_secrets" {
-  for_each = fileset("${path.module}/../../k8s/techchallenge/secret", "*.yaml")
-  manifest = yamldecode(file("${path.module}/../../k8s/techchallenge/secret/${each.value}"))
+resource "kubernetes_secret" "techchallenge_secrets" {
+  metadata {
+    name      = "tech-challenge-secret"
+    namespace = "techchallenge"
+  }
 
-  depends_on = [kubernetes_manifest.techchallenge_namespaces]
+  binary_data = {
+    external-api-token = "QmVhcmVyIEFQUF9VU1ItMTQ5NDA0NTE4MjMwMTg4Ni0wOTEyMDgtZDIyZWFhNzAyMGYwYmYyZWU0ZTQxMDQ1ZGYxZDlmNjAtMTk4NjM1NzIzOQ=="
+  }
+
+  data = {
+    db-url      = data.aws_ssm_parameter.rds_endpoint.value
+    db-username = local.db_credentials["username"]
+    db-password = local.db_credentials["password"]
+  }
+
+  type = "Opaque"
+
+  depends_on = [kubernetes_namespace.techchallenge_namespaces]
 }
 
-resource "kubernetes_manifest" "techchallenge_storageclass" {
-  for_each = fileset("${path.module}/../../k8s/techchallenge/storageclass", "*.yaml")
-  manifest = yamldecode(file("${path.module}/../../k8s/techchallenge/storageclass/${each.value}"))
+resource "kubernetes_deployment" "techchallenge_deployments" {
+  metadata {
+    name      = "tech-challenge-app"
+    namespace = "techchallenge"
+    labels = {
+      app = "tech-challenge-app"
+    }
+  }
 
-  depends_on = [
-    kubernetes_manifest.techchallenge_namespaces,
-    kubernetes_manifest.techchallenge_secrets
-  ]
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        app = "tech-challenge-app"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "tech-challenge-app"
+        }
+      }
+
+      spec {
+        container {
+          image             = "willosouza/fiap-soat-tech-challenge:v2.0.0"
+          name              = "tech-challenge-app"
+          image_pull_policy = "Always"
+
+          resources {
+            limits = {
+              cpu    = "500m"
+              memory = "1Gi"
+            }
+            requests = {
+              cpu    = "250m"
+              memory = "512Mi"
+            }
+          }
+
+          liveness_probe {
+            http_get {
+              path = "/api/actuator/health"
+              port = 8357
+            }
+            initial_delay_seconds = 60
+            period_seconds        = 30
+            timeout_seconds       = 5
+            failure_threshold     = 3
+          }
+
+          readiness_probe {
+            http_get {
+              path = "/api/actuator/health"
+              port = 8357
+            }
+            initial_delay_seconds = 60
+            period_seconds        = 10
+            timeout_seconds       = 3
+            failure_threshold     = 1
+          }
+
+          env {
+            name  = "SPRING_PROFILES_ACTIVE"
+            value = "default"
+          }
+
+          env {
+            name  = "EXTERNAL_API_HOST"
+            value = "https://api.mercadopago.com"
+          }
+
+          env {
+            name  = "EXTERNAL_API_CREATE_QR"
+            value = "/instore/orders/qr/seller/collectors/1986357239/pos/FIAPSOAT12C/qrs"
+          }
+
+          env {
+            name  = "EXTERNAL_API_GET_PAYMENT"
+            value = "/v1/payments/"
+          }
+
+          env {
+            name = "SPRING_DATASOURCE_URL"
+            value_from {
+              secret_key_ref {
+                name = "tech-challenge-secret"
+                key  = "db-url"
+              }
+            }
+          }
+
+          env {
+            name = "SPRING_DATASOURCE_USERNAME"
+            value_from {
+              secret_key_ref {
+                name = "tech-challenge-secret"
+                key  = "db-username"
+              }
+            }
+          }
+
+          env {
+            name = "SPRING_DATASOURCE_PASSWORD"
+            value_from {
+              secret_key_ref {
+                name = "tech-challenge-secret"
+                key  = "db-password"
+              }
+            }
+          }
+
+          env {
+            name = "EXTERNAL_API_TOKEN"
+            value_from {
+              secret_key_ref {
+                name = "tech-challenge-secret"
+                key  = "external-api-token"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  depends_on = [kubernetes_secret.techchallenge_secrets]
 }
 
-resource "kubernetes_manifest" "techchallenge_persistentvolumeclaim" {
-  for_each = fileset("${path.module}/../../k8s/techchallenge/pvc", "*.yaml")
-  manifest = yamldecode(file("${path.module}/../../k8s/techchallenge/pvc/${each.value}"))
+resource "kubernetes_service" "techchallenge_services" {
+  metadata {
+    name      = "tech-challenge-app-service"
+    namespace = "techchallenge"
+  }
 
-  depends_on = [
-    kubernetes_manifest.techchallenge_namespaces,
-    kubernetes_manifest.techchallenge_storageclass
-  ]
+  spec {
+    selector = {
+      app = "tech-challenge-app"
+    }
+
+    port {
+      port        = 8357
+      target_port = 8357
+    }
+
+    cluster_ip = "None"
+  }
 }
 
-resource "kubernetes_manifest" "techchallenge_persistentvolume" {
-  for_each = fileset("${path.module}/../../k8s/techchallenge/pv", "*.yaml")
-  manifest = yamldecode(file("${path.module}/../../k8s/techchallenge/pv/${each.value}"))
+resource "kubernetes_ingress_v1" "tech_challenge_ingress" {
+  metadata {
+    name      = "tech-challenge-ingress"
+    namespace = "techchallenge"
 
-  depends_on = [
-    kubernetes_manifest.techchallenge_namespaces,
-    kubernetes_manifest.techchallenge_storageclass
-  ]
+    annotations = {
+      "nginx.ingress.kubernetes.io/x-forwarded-port" = "true"
+      "nginx.ingress.kubernetes.io/x-forwarded-host" = "true"
+    }
+  }
+
+  spec {
+    ingress_class_name = "nginx"
+
+    rule {
+      http {
+        path {
+          path      = "/api"
+          path_type = "Prefix"
+
+          backend {
+            service {
+              name = "tech-challenge-app-service"
+              port {
+                number = 8357
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  depends_on = [kubernetes_service.techchallenge_services]
+
 }
 
-resource "kubernetes_manifest" "techchallenge_statefulset" {
-  for_each = fileset("${path.module}/../../k8s/techchallenge/statefulset", "*.yaml")
-  manifest = yamldecode(file("${path.module}/../../k8s/techchallenge/statefulset/${each.value}"))
+resource "kubernetes_horizontal_pod_autoscaler_v2" "tech_challenge_hpa" {
+  metadata {
+    name      = "tech-challenge-hpa"
+    namespace = "techchallenge"
+  }
 
-  depends_on = [
-    kubernetes_manifest.techchallenge_namespaces,
-    kubernetes_manifest.techchallenge_persistentvolume
-  ]
-}
+  spec {
+    scale_target_ref {
+      api_version = "apps/v1"
+      kind        = "Deployment"
+      name        = "tech-challenge-app"
+    }
 
-resource "kubernetes_manifest" "techchallenge_deployments" {
-  for_each = fileset("${path.module}/../../k8s/techchallenge/deployment", "*.yaml")
-  manifest = yamldecode(file("${path.module}/../../k8s/techchallenge/deployment/${each.value}"))
+    min_replicas = 1
+    max_replicas = 5
 
-  depends_on = [
-    kubernetes_manifest.techchallenge_namespaces,
-    kubernetes_manifest.techchallenge_secrets,
-    kubernetes_manifest.techchallenge_statefulset
-  ]
-}
+    metric {
+      type = "Resource"
 
-resource "kubernetes_manifest" "techchallenge_services" {
-  for_each = fileset("${path.module}/../../k8s/techchallenge/service", "*.yaml")
-  manifest = yamldecode(file("${path.module}/../../k8s/techchallenge/service/${each.value}"))
+      resource {
+        name = "cpu"
+        target {
+          type                = "Utilization"
+          average_utilization = 75
+        }
+      }
+    }
+  }
 
-  depends_on = [
-    kubernetes_manifest.techchallenge_namespaces,
-    kubernetes_manifest.techchallenge_deployments
-  ]
-}
+  depends_on = [kubernetes_service.techchallenge_services]
 
-resource "kubernetes_manifest" "techchallenge_ingress" {
-  for_each = fileset("${path.module}/../../k8s/techchallenge/ingress", "*.yaml")
-  manifest = yamldecode(file("${path.module}/../../k8s/techchallenge/ingress/${each.value}"))
-
-  depends_on = [
-    kubernetes_manifest.techchallenge_namespaces,
-    kubernetes_manifest.techchallenge_deployments
-  ]
-}
-
-resource "kubernetes_manifest" "techchallenge_hpa" {
-  for_each = fileset("${path.module}/../../k8s/techchallenge/hpa", "*.yaml")
-  manifest = yamldecode(file("${path.module}/../../k8s/techchallenge/hpa/${each.value}"))
-
-  depends_on = [
-    kubernetes_manifest.techchallenge_namespaces,
-    kubernetes_manifest.techchallenge_services
-  ]
 }
