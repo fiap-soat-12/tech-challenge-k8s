@@ -9,7 +9,9 @@ on:
       - main
 
 jobs:
+  # Job para verificação do terraform do cluster em pull requests e merge para a main e push para EKS na main 
   cluster:
+    name: Terraform Verification and Push Cluster to EKS
     runs-on: ubuntu-latest
 
     permissions:
@@ -48,6 +50,7 @@ jobs:
         run: terraform plan -out=tfplan-cluster
 
       - name: Apply Terraform for Cluster
+        if: github.ref == 'refs/heads/main' # Executa apenas na branch main
         working-directory: terraform/cluster
         run: |
           EXISTS=$(aws eks describe-cluster --name fiap-tech-challenge-eks-cluster --region us-east-1 --query 'cluster.name' --output text 2>/dev/null || echo "NOT_FOUND")
@@ -65,11 +68,13 @@ jobs:
 
       - name: Update kubeconfig for EKS
         run: aws eks update-kubeconfig --name fiap-tech-challenge-eks-cluster --region us-east-1
-        
+
+  # Job para verificação do terraform do infra em pull requests e merge para a main e push para EKS na main 
   infra:
+    name: Terraform Verification and Push Infrastructureand to Cluster
     runs-on: ubuntu-latest
 
-    needs: cluster  # Aguarda o job do cluster ser concluído
+    needs: cluster
 
     permissions:
       id-token: write
@@ -107,5 +112,6 @@ jobs:
         run: terraform plan -out=tfplan-infra
 
       - name: Apply Terraform for Infra
+        if: github.ref == 'refs/heads/main' # Executa apenas na branch main
         working-directory: terraform/infra
         run: terraform apply -auto-approve tfplan-infra
