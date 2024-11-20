@@ -208,7 +208,7 @@ resource "kubernetes_ingress_v1" "tech_challenge_ingress" {
       }
     }
   }
-  
+
   depends_on = [kubernetes_service.techchallenge_services]
 
 }

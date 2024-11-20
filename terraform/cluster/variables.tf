@@ -1,5 +1,7 @@
 variable "aws_region" {
-  default = "us-east-1"
+  type        = string
+  default     = "us-east-1"
+  description = "AWS Account region"
 }
 
 variable "eks_cluster_name" {
