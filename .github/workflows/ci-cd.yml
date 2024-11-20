@@ -1,4 +1,4 @@
-name: Terraform Deploy to AWS
+name: Terraform Cluster and Infra Deploy to AWS
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  terraform:
+  cluster:
     runs-on: ubuntu-latest
 
     permissions:
@@ -32,8 +32,9 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.4.0
-        
+
       # Inicializar, validar e aplicar o Terraform para o diretório cluster
+
       - name: Initialize Terraform for Cluster
         working-directory: terraform/cluster
         run: terraform init
@@ -44,13 +45,40 @@ jobs:
 
       - name: Plan Terraform for Cluster
         working-directory: terraform/cluster
-        run: terraform plan -out=cluster
+        run: terraform plan -out=tfplan-cluster
 
       - name: Apply Terraform for Cluster
         working-directory: terraform/cluster
-        run: terraform apply -auto-approve cluster
+        run: terraform apply -auto-approve tfplan-cluster
         
+  infra:
+    runs-on: ubuntu-latest
+
+    needs: cluster  # Aguarda o job do cluster ser concluído
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.4.0
+
       # Inicializar, validar e aplicar o Terraform para o diretório infra
+
       - name: Initialize Terraform for Infra
         working-directory: terraform/infra
         run: terraform init
@@ -65,4 +93,4 @@ jobs:
 
       - name: Apply Terraform for Infra
         working-directory: terraform/infra
-        run: terraform apply -auto-approve infra
+        run: terraform apply -auto-approve tfplan-infra
