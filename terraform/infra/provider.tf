@@ -1,6 +1,7 @@
 provider "aws" {
-  region = "us-east-1"
+  region = var.aws_region
 }
+
 
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.fiap-tech-challenge-eks-cluster.endpoint

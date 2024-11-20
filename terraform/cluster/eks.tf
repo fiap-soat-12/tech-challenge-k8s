@@ -3,7 +3,7 @@ resource "aws_eks_cluster" "eks_cluster" {
   role_arn = data.aws_iam_role.lab_role.arn
 
   vpc_config {
-    subnet_ids = [for subnet in data.aws_subnet.selected_subnets : subnet.id]
+    subnet_ids = [for subnet in data.aws_subnet.selected_private_subnets : subnet.id]
   }
 }
 
@@ -12,7 +12,7 @@ resource "aws_eks_node_group" "eks_node_group" {
   node_group_name = var.node_group_name
   node_role_arn   = data.aws_iam_role.lab_role.arn
 
-  subnet_ids = [for subnet in data.aws_subnet.selected_subnets : subnet.id]
+  subnet_ids = [for subnet in data.aws_subnet.selected_private_subnets : subnet.id]
 
   scaling_config {
     desired_size = 2
