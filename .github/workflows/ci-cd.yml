@@ -49,7 +49,22 @@ jobs:
 
       - name: Apply Terraform for Cluster
         working-directory: terraform/cluster
-        run: terraform apply -auto-approve tfplan-cluster
+        run: |
+          EXISTS=$(aws eks describe-cluster --name fiap-tech-challenge-eks-cluster --region us-east-1 --query 'cluster.name' --output text 2>/dev/null || echo "NOT_FOUND")
+          if [ "$EXISTS" == "NOT_FOUND" ]; then
+            echo "Cluster não encontrado. Aplicando configurações com Terraform."
+            terraform apply -auto-approve tfplan-cluster
+          else
+            echo "Cluster já existe. Pulando criação."
+          fi
+
+      - name: Wait for EKS Cluster to be Ready
+        run: |
+          echo "Aguardando o cluster estar ativo..."
+          aws eks wait cluster-active --name fiap-tech-challenge-eks-cluster --region us-east-1
+
+      - name: Update kubeconfig for EKS
+        run: aws eks update-kubeconfig --name fiap-tech-challenge-eks-cluster --region us-east-1
         
   infra:
     runs-on: ubuntu-latest
