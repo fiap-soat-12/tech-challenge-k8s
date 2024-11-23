@@ -47,6 +47,7 @@ jobs:
         run: terraform validate
 
       - name: Plan Terraform for Cluster
+        if: github.ref == 'refs/heads/main' # Executa apenas na branch main
         working-directory: terraform/cluster
         run: terraform plan -out=tfplan-cluster
 
@@ -109,6 +110,7 @@ jobs:
         run: terraform validate
 
       - name: Plan Terraform for Infra
+        if: github.ref == 'refs/heads/main' # Executa apenas na branch main
         working-directory: terraform/infra
         run: terraform plan -out=tfplan-infra
 
