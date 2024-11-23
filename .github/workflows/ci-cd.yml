@@ -64,11 +64,13 @@ jobs:
           fi
 
       - name: Wait for EKS Cluster to be Ready
+        if: github.ref == 'refs/heads/main' # Executa apenas na branch main
         run: |
           echo "Aguardando o cluster estar ativo..."
           aws eks wait cluster-active --name fiap-tech-challenge-eks-cluster --region us-east-1
 
       - name: Update kubeconfig for EKS
+        if: github.ref == 'refs/heads/main' # Executa apenas na branch main
         run: aws eks update-kubeconfig --name fiap-tech-challenge-eks-cluster --region us-east-1
 
   # Job para verificação do terraform do infra em pull requests e merge para a main e push para EKS na main 
