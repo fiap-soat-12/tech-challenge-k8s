@@ -6,7 +6,7 @@ variable "aws_region" {
 
 variable "vpc_name" {
   type        = string
-  default     = "techchallenge-vpc"
+  default     = "tech-challenge-vpc"
   description = "Custom VPC name"
 }
 

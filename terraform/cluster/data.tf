@@ -1,7 +1,7 @@
 data "aws_vpc" "selected_vpc" {
   filter {
     name   = "tag:Name"
-    values = ["techchallenge-vpc"]
+    values = ["tech-challenge-vpc"]
   }
 }
 
@@ -19,7 +19,7 @@ data "aws_subnets" "private_subnets" {
   depends_on = [data.aws_vpc.selected_vpc]
 }
 
-data "aws_subnet" "selected_private_subnets" {
+data "aws_subnet" "selected_subnets" {
   for_each = toset(data.aws_subnets.private_subnets.ids)
   id       = each.value
 

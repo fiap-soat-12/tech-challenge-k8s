@@ -17,7 +17,7 @@ data "aws_subnets" "private_subnets" {
   }
 }
 
-data "aws_subnet" "selected_private_subnets" {
+data "aws_subnet" "selected_subnets" {
   for_each = toset(data.aws_subnets.private_subnets.ids)
   id       = each.value
 }
