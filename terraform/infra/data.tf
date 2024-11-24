@@ -44,3 +44,12 @@ data "aws_instances" "eks_worker_instances" {
     values = [var.node_group_name]
   }
 }
+
+data "aws_ecr_repository" "ecr_repo" {
+  name = "fiap-soat-tech-challenge-api"
+}
+
+data "aws_ecr_image" "latest_image" {
+  repository_name = data.aws_ecr_repository.ecr_repo.name
+  image_tag       = "latest"
+}
