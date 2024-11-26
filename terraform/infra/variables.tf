@@ -1,10 +1,12 @@
 variable "aws_region" {
-  default = "us-east-1"
+  type        = string
+  default     = "us-east-1"
+  description = "AWS Account region"
 }
 
 variable "vpc_name" {
-  type = string
-  default = "techchallenge-vpc"
+  type        = string
+  default     = "tech-challenge-vpc"
   description = "Custom VPC name"
 }
 

@@ -30,7 +30,7 @@ resource "kubernetes_config_map_v1" "grafana_configmaps" {
   }
 
   data = {
-    "default-dashboard.json" = "${file("${path.module}/charts/grafana/default_dashboard.json")}"
+    "default-dashboard.json" = file("${path.module}/charts/grafana/default_dashboard.json")
   }
 
   depends_on = [

@@ -1,8 +1,6 @@
 controller:
   kind: DaemonSet
   service:
-    annotations:
-      service.beta.kubernetes.io/aws-load-balancer-arn: "{{ .Values.loadBalancerArn }}"
     type: NodePort
     externalTrafficPolicy: Local
     nodePorts:

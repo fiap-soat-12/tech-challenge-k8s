@@ -52,7 +52,7 @@ resource "kubernetes_deployment" "techchallenge_deployments" {
 
       spec {
         container {
-          image             = "willosouza/fiap-soat-tech-challenge:v2.0.0"
+          image             = data.aws_ecr_image.latest_image.image_uri
           name              = "tech-challenge-app"
           image_pull_policy = "Always"
 
@@ -208,7 +208,7 @@ resource "kubernetes_ingress_v1" "tech_challenge_ingress" {
       }
     }
   }
-  
+
   depends_on = [kubernetes_service.techchallenge_services]
 
 }
