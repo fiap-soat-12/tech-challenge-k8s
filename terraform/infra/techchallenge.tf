@@ -1,13 +1,13 @@
 resource "kubernetes_namespace" "techchallenge_namespaces" {
   metadata {
-    name = "techchallenge"
+    name = "tech-challenge"
   }
 }
 
 resource "kubernetes_secret" "techchallenge_secrets" {
   metadata {
     name      = "tech-challenge-secret"
-    namespace = "techchallenge"
+    namespace = kubernetes_namespace.techchallenge_namespaces.metadata[0].name
   }
 
   binary_data = {
@@ -28,7 +28,7 @@ resource "kubernetes_secret" "techchallenge_secrets" {
 resource "kubernetes_deployment" "techchallenge_deployments" {
   metadata {
     name      = "tech-challenge-app"
-    namespace = "techchallenge"
+    namespace = kubernetes_namespace.techchallenge_namespaces.metadata[0].name
     labels = {
       app = "tech-challenge-app"
     }
@@ -159,7 +159,7 @@ resource "kubernetes_deployment" "techchallenge_deployments" {
 resource "kubernetes_service" "techchallenge_services" {
   metadata {
     name      = "tech-challenge-app-service"
-    namespace = "techchallenge"
+    namespace = kubernetes_namespace.techchallenge_namespaces.metadata[0].name
   }
 
   spec {
@@ -179,7 +179,7 @@ resource "kubernetes_service" "techchallenge_services" {
 resource "kubernetes_ingress_v1" "tech_challenge_ingress" {
   metadata {
     name      = "tech-challenge-ingress"
-    namespace = "techchallenge"
+    namespace = kubernetes_namespace.techchallenge_namespaces.metadata[0].name
 
     annotations = {
       "nginx.ingress.kubernetes.io/x-forwarded-port" = "true"
@@ -216,7 +216,7 @@ resource "kubernetes_ingress_v1" "tech_challenge_ingress" {
 resource "kubernetes_horizontal_pod_autoscaler_v2" "tech_challenge_hpa" {
   metadata {
     name      = "tech-challenge-hpa"
-    namespace = "techchallenge"
+    namespace = kubernetes_namespace.techchallenge_namespaces.metadata[0].name
   }
 
   spec {

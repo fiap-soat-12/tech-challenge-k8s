@@ -22,12 +22,12 @@ data "aws_subnet" "selected_subnets" {
   id       = each.value
 }
 
-data "aws_eks_cluster" "fiap-tech-challenge-eks-cluster" {
+data "aws_eks_cluster" "eks_cluster" {
   name = var.eks_cluster_name
 }
 
-data "aws_eks_cluster_auth" "fiap-tech-challenge-eks-cluster" {
-  name = data.aws_eks_cluster.fiap-tech-challenge-eks-cluster.name
+data "aws_eks_cluster_auth" "eks_cluster" {
+  name = data.aws_eks_cluster.eks_cluster.name
 }
 
 data "aws_secretsmanager_secret_version" "db_credentials" {
@@ -52,4 +52,9 @@ data "aws_ecr_repository" "ecr_repo" {
 data "aws_ecr_image" "latest_image" {
   repository_name = data.aws_ecr_repository.ecr_repo.name
   image_tag       = "latest"
+}
+
+data "aws_ip_ranges" "api_gateway" {
+  services = ["API_GATEWAY"]
+  regions  = [var.aws_region]
 }

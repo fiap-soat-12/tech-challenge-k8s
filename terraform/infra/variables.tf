@@ -24,7 +24,7 @@ variable "node_group_name" {
 
 variable "secret_name" {
   type        = string
-  default     = "techchallenge_db_credentials"
+  default     = "tech-challenge-db-credentials"
   description = "Secrets Manager Secret name"
 }
 
