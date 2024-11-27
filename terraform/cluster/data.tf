@@ -30,3 +30,7 @@ data "aws_iam_role" "lab_role" {
   name = "LabRole"
 }
 
+data "aws_db_instance" "rds_instance" {
+  db_instance_identifier = "tech-challenge-db"
+}
+

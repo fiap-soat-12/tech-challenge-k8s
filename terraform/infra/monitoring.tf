@@ -6,7 +6,7 @@ resource "kubernetes_namespace" "monitoring_namespaces" {
 
 resource "helm_release" "kube-prometheus-stack" {
   name       = "kube-prometheus-stack"
-  namespace  = "monitoring"
+  namespace  = kubernetes_namespace.monitoring_namespaces.metadata[0].name
   chart      = "kube-prometheus-stack"
   repository = "https://prometheus-community.github.io/helm-charts"
   version    = "51.2.0"
@@ -23,7 +23,7 @@ resource "helm_release" "kube-prometheus-stack" {
 resource "kubernetes_config_map_v1" "grafana_configmaps" {
   metadata {
     name = "grafana-dashboards"
-    namespace = "monitoring"
+    namespace = kubernetes_namespace.monitoring_namespaces.metadata[0].name
     labels = {
       "grafana_dashboard": "1"
     }
@@ -40,7 +40,7 @@ resource "kubernetes_config_map_v1" "grafana_configmaps" {
 
 resource "helm_release" "grafana" {
   name       = "grafana"
-  namespace  = "monitoring"
+  namespace  = kubernetes_namespace.monitoring_namespaces.metadata[0].name
   chart      = "grafana"
   repository = "https://grafana.github.io/helm-charts"
   version    = "8.5.1"
@@ -58,7 +58,7 @@ resource "helm_release" "grafana" {
 resource "kubernetes_ingress_v1" "monitoring_ingress" {
   metadata {
     name      = "grafana-ingress"
-    namespace = "monitoring"
+    namespace = kubernetes_namespace.monitoring_namespaces.metadata[0].name
   }
 
   spec {
