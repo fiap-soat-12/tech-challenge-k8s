@@ -35,6 +35,7 @@ Este repositório é responsável por criar o cluster e toda a infraestrutura ne
 
 - **[Kubernetes](https://kubernetes.io/pt-br/docs/home/)**: Documentação oficial do Kubernetes.
 - **[Terraform](https://www.terraform.io/)**: Site oficial do Terraform.
+- **[AWS](https://aws.amazon.com/pt/)**: Site oficial da AWS.
 
 ## 🚀 Execução
 
