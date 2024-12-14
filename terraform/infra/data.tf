@@ -62,14 +62,14 @@ data "aws_instances" "eks_worker_instances" {
   }
 }
 
-# data "aws_ecr_repository" "ecr_repo" {
-#   name = "fiap-soat-tech-challenge-api"
-# }
+data "aws_ecr_repository" "ecr_repo" {
+  name = "fiap-soat-tech-challenge-api"
+}
 
-# data "aws_ecr_image" "latest_image" {
-#   repository_name = data.aws_ecr_repository.ecr_repo.name
-#   image_tag       = "latest"
-# }
+data "aws_ecr_image" "latest_image" {
+  repository_name = data.aws_ecr_repository.ecr_repo.name
+  image_tag       = "latest"
+}
 
 data "aws_ip_ranges" "api_gateway" {
   services = ["API_GATEWAY"]

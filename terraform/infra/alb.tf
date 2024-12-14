@@ -69,27 +69,6 @@ resource "aws_lb_listener" "alb_listener" {
   }
 }
 
-# resource "aws_lb_listener_rule" "healthcheck_rule" {
-#   listener_arn = aws_lb_listener.alb_listener.arn
-#   priority     = 1
-
-#   action {
-#     type = "fixed-response"
-#     fixed_response {
-#       content_type = "text/plain"
-#       message_body = "HEALTHY"
-#       status_code  = "200"
-#     }
-#   }
-
-#   condition {
-#     path_pattern {
-#       values = ["/alb/health"]
-#     }
-#   }
-# }
-
-
 resource "aws_lb_listener_rule" "grafana_rule" {
   listener_arn = aws_lb_listener.alb_listener.arn
   priority     = 1
@@ -105,23 +84,6 @@ resource "aws_lb_listener_rule" "grafana_rule" {
     }
   }
 }
-
-# resource "aws_lb_listener_rule" "grafana_rule" {
-#   listener_arn = aws_lb_listener.alb_listener.arn
-#   priority     = 3
-
-#   action {
-#     type             = "forward"
-#     target_group_arn = aws_lb_target_group.alb_target_group.arn
-#   }
-
-#   condition {
-#     path_pattern {
-#       values = ["/api*"]
-#     }
-#   }
-# }
-
 
 resource "aws_security_group_rule" "allow_alb_to_nodeport" {
   type                     = "ingress"
