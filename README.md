@@ -37,6 +37,11 @@ Este repositório é responsável por criar o cluster e toda a infraestrutura ne
 - **[Terraform](https://www.terraform.io/)**: Site oficial do Terraform.
 - **[AWS](https://aws.amazon.com/pt/)**: Site oficial da AWS.
 
+
+### Desenho da infraestrutura
+
+![eks-cluster](./assets/infra-diagram.png)
+
 ## 🚀 Execução
 
 ### Subindo aplicação em Cluster EKS
@@ -55,9 +60,8 @@ Este repositório é responsável por criar o cluster e toda a infraestrutura ne
   7. Executar o comando `terraform apply` para criar a infra dentro do cluster;
   8. Após a execução do Terraform finalizar, verificar se o cluster e os nodes foram inicializados na AWS;
   ![eks-cluster](./assets/eks-cluster.png)
-  9. Após a criação do cluster, é necessário configurar o kubeconfig para que o `kubectl` aponte para o novo cluster criado na AWS. Para fazer isso, basta executar o comando `aws eks update-kubeconfig --region us-east-1 --name fiap-tech-challenge-eks-cluster`. A region escolhida para que o cluster seja criado foi a `us-east-1` e o nome do cluster é `fiap-tech-challenge-eks-cluster`
-  10. Acessar a pasta `terraform/infra` que contém os arquivos que irão criar os Pods da aplicação e do Banco de Dados, os services e os recursos relacionados à monitoração na AWS;
-  11. Inicializar o Terraform no projeto `terraform init`;
-  12. Verificar que o script do Terraform é valido rodando o comando `terraform validate`;
-  13. Executar o comando `terraform plan` para executar o planejamento da execução/implementação;
-  14. Executar o comando `terraform apply` para criar a infra dentro do cluster;
+  9. Acessar a pasta `terraform/infra` que contém os arquivos que irão criar os Pods da aplicação e do Banco de Dados, os services e os recursos relacionados à monitoração na AWS;
+  10. Inicializar o Terraform no projeto `terraform init`;
+  11. Verificar que o script do Terraform é valido rodando o comando `terraform validate`;
+  12. Executar o comando `terraform plan` para executar o planejamento da execução/implementação;
+  13. Executar o comando `terraform apply` para criar a infra dentro do cluster;
