@@ -22,10 +22,10 @@ resource "helm_release" "kube-prometheus-stack" {
 
 resource "kubernetes_config_map_v1" "grafana_configmaps" {
   metadata {
-    name = "grafana-dashboards"
+    name      = "grafana-dashboards"
     namespace = kubernetes_namespace.monitoring_namespaces.metadata[0].name
     labels = {
-      "grafana_dashboard": "1"
+      "grafana_dashboard" : "1"
     }
   }
 
@@ -59,6 +59,11 @@ resource "kubernetes_ingress_v1" "monitoring_ingress" {
   metadata {
     name      = "grafana-ingress"
     namespace = kubernetes_namespace.monitoring_namespaces.metadata[0].name
+
+    annotations = {
+      "nginx.ingress.kubernetes.io/x-forwarded-port" = "true"
+      "nginx.ingress.kubernetes.io/x-forwarded-host" = "true"
+    }
   }
 
   spec {
@@ -82,7 +87,7 @@ resource "kubernetes_ingress_v1" "monitoring_ingress" {
       }
     }
   }
-  
+
   depends_on = [helm_release.grafana]
 
 }

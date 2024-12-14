@@ -1,11 +1,19 @@
 controller:
   kind: DaemonSet
+  
+  config:
+    enable-access-log: "true"
+    enable-snippet-annotations: "true"
+    use-forwarded-headers: "true"
+    enable-rewrite-log: "true"
+    compute-full-forwarded-for: "true"
+
   service:
     type: NodePort
-    externalTrafficPolicy: Local
     nodePorts:
       http: 30080
       https: 30443
+
   metrics:
     enabled: true
     service:

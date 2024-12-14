@@ -41,3 +41,9 @@ grafana.ini:
   server:
     root_url: "%(protocol)s://%(domain)s:%(http_port)s/grafana/"
     serve_from_sub_path: true
+  auth:
+    disable_login_form: false
+  http:
+    allow_cors: true
+  security:
+    allow_embedding: true
