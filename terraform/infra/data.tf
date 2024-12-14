@@ -17,8 +17,25 @@ data "aws_subnets" "private_subnets" {
   }
 }
 
-data "aws_subnet" "selected_subnets" {
+data "aws_subnets" "public_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.selected_vpc.id]
+  }
+
+  filter {
+    name   = "tag:Environment"
+    values = ["public"]
+  }
+}
+
+data "aws_subnet" "selected_private_subnets" {
   for_each = toset(data.aws_subnets.private_subnets.ids)
+  id       = each.value
+}
+
+data "aws_subnet" "selected_public_subnets" {
+  for_each = toset(data.aws_subnets.public_subnets.ids)
   id       = each.value
 }
 
@@ -45,14 +62,14 @@ data "aws_instances" "eks_worker_instances" {
   }
 }
 
-data "aws_ecr_repository" "ecr_repo" {
-  name = "fiap-soat-tech-challenge-api"
-}
+# data "aws_ecr_repository" "ecr_repo" {
+#   name = "fiap-soat-tech-challenge-api"
+# }
 
-data "aws_ecr_image" "latest_image" {
-  repository_name = data.aws_ecr_repository.ecr_repo.name
-  image_tag       = "latest"
-}
+# data "aws_ecr_image" "latest_image" {
+#   repository_name = data.aws_ecr_repository.ecr_repo.name
+#   image_tag       = "latest"
+# }
 
 data "aws_ip_ranges" "api_gateway" {
   services = ["API_GATEWAY"]

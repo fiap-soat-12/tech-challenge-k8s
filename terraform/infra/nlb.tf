@@ -3,13 +3,13 @@ resource "aws_lb" "nlb" {
   internal           = true
   load_balancer_type = "network"
   security_groups    = [aws_security_group.nlb_sg.id]
-  subnets            = [for subnet in data.aws_subnet.selected_subnets : subnet.id]
+  subnets            = [for subnet in data.aws_subnet.selected_private_subnets : subnet.id]
 }
 
 resource "aws_security_group" "nlb_sg" {
-  name   = "tech-challenge-nlb-sg"
+  name        = "tech-challenge-nlb-sg"
   description = "Security group for the Network Load Balancer"
-  vpc_id = data.aws_vpc.selected_vpc.id
+  vpc_id      = data.aws_vpc.selected_vpc.id
 
   ingress {
     from_port   = 80
