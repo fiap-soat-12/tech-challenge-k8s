@@ -1,5 +1,5 @@
 resource "aws_lb" "alb" {
-  name               = "tech-challenge-alb"
+  name               = var.alb_name
   load_balancer_type = "application"
   internal           = false
   security_groups    = [aws_security_group.alb_sg.id]
@@ -9,7 +9,7 @@ resource "aws_lb" "alb" {
 }
 
 resource "aws_security_group" "alb_sg" {
-  name        = "tech-challenge-alb-sg"
+  name        = "${var.alb_name}-sg"
   description = "Security group for the Application Load Balancer"
   vpc_id      = data.aws_vpc.selected_vpc.id
 
@@ -29,7 +29,7 @@ resource "aws_security_group" "alb_sg" {
 }
 
 resource "aws_lb_target_group" "alb_target_group" {
-  name        = "tech-challenge-alb-tg"
+  name        = "${var.alb_name}-tg"
   port        = 30080
   protocol    = "HTTP"
   vpc_id      = data.aws_vpc.selected_vpc.id
