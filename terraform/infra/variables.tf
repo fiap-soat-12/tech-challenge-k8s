@@ -22,14 +22,14 @@ variable "node_group_name" {
   description = "EKS Cluster name"
 }
 
-variable "secret_name" {
-  type        = string
-  default     = "tech-challenge-db-credentials"
-  description = "Secrets Manager Secret name"
-}
-
 variable "alb_name" {
   type        = string
   default     = "tech-challenge-alb"
   description = "Application Load Balancer name"
+}
+
+variable "nlb_name" {
+  type        = string
+  default     = "tech-challenge-nlb"
+  description = "Network Load Balancer name"
 }

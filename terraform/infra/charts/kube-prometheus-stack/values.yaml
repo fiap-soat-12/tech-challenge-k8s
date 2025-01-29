@@ -1,11 +1,24 @@
 prometheus:
   prometheusSpec:
     additionalScrapeConfigs:
-      - job_name: 'tech-challenge-app'
+      - job_name: 'tech-challenge-payment-app'
         scrape_interval: 1s
         static_configs:
-          - targets: ['tech-challenge-app-service.tech-challenge.svc.cluster.local:8357']
-        metrics_path: /api/actuator/prometheus
+          - targets: 
+            - 'tech-challenge-payment-app-service.payment.svc.cluster.local:8100'
+        metrics_path: /payment/actuator/prometheus
+      - job_name: 'tech-challenge-order-app'
+        scrape_interval: 1s
+        static_configs:
+          - targets: 
+            - 'tech-challenge-order-app-service.order.svc.cluster.local:8200'
+        metrics_path: /order/actuator/prometheus
+      - job_name: 'tech-challenge-cook-app'
+        scrape_interval: 1s
+        static_configs:
+          - targets: 
+            - 'tech-challenge-cook-app-service.cook.svc.cluster.local:8100'
+        metrics_path: /cook/actuator/prometheus
       - job_name: 'ingress-nginx-metrics'
         metrics_path: /metrics
         kubernetes_sd_configs:

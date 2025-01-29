@@ -47,28 +47,11 @@ data "aws_eks_cluster_auth" "eks_cluster" {
   name = data.aws_eks_cluster.eks_cluster.name
 }
 
-data "aws_secretsmanager_secret_version" "db_credentials" {
-  secret_id = var.secret_name
-}
-
-data "aws_ssm_parameter" "rds_endpoint" {
-  name = "/fiap-tech-challenge/tech-challenge-rds-endpoint"
-}
-
 data "aws_instances" "eks_worker_instances" {
   filter {
     name   = "tag:eks:nodegroup-name"
     values = [var.node_group_name]
   }
-}
-
-data "aws_ecr_repository" "ecr_repo" {
-  name = "fiap-soat-tech-challenge-api"
-}
-
-data "aws_ecr_image" "latest_image" {
-  repository_name = data.aws_ecr_repository.ecr_repo.name
-  image_tag       = "latest"
 }
 
 data "aws_ip_ranges" "api_gateway" {

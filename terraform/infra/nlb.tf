@@ -1,5 +1,5 @@
 resource "aws_lb" "nlb" {
-  name               = "tech-challenge-nlb"
+  name               = var.nlb_name
   internal           = true
   load_balancer_type = "network"
   security_groups    = [aws_security_group.nlb_sg.id]
@@ -7,7 +7,7 @@ resource "aws_lb" "nlb" {
 }
 
 resource "aws_security_group" "nlb_sg" {
-  name        = "tech-challenge-nlb-sg"
+  name        = "${var.nlb_name}-sg"
   description = "Security group for the Network Load Balancer"
   vpc_id      = data.aws_vpc.selected_vpc.id
 
@@ -27,7 +27,7 @@ resource "aws_security_group" "nlb_sg" {
 }
 
 resource "aws_lb_target_group" "nlb_target_group" {
-  name        = "tech-challenge-nlb-tg"
+  name        = "${var.nlb_name}-tg"
   port        = 30080
   protocol    = "TCP"
   vpc_id      = data.aws_vpc.selected_vpc.id
