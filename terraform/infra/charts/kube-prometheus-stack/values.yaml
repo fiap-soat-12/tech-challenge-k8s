@@ -2,44 +2,48 @@ prometheus:
   prometheusSpec:
     additionalScrapeConfigs:
       - job_name: 'tech-challenge-payment-app'
-        scrape_interval: 1s
+        scrape_interval: '15s'
         static_configs:
           - targets: 
             - 'tech-challenge-payment-app-service.payment.svc.cluster.local:8100'
-        metrics_path: /payment/actuator/prometheus
+        metrics_path: '/payment/actuator/prometheus'
       - job_name: 'tech-challenge-order-app'
-        scrape_interval: 1s
+        scrape_interval: '15s'
         static_configs:
           - targets: 
             - 'tech-challenge-order-app-service.order.svc.cluster.local:8200'
-        metrics_path: /order/actuator/prometheus
+        metrics_path: '/order/actuator/prometheus'
       - job_name: 'tech-challenge-cook-app'
-        scrape_interval: 1s
+        scrape_interval: '15s'
         static_configs:
           - targets: 
             - 'tech-challenge-cook-app-service.cook.svc.cluster.local:8100'
-        metrics_path: /cook/actuator/prometheus
+        metrics_path: '/cook/actuator/prometheus'
       - job_name: 'ingress-nginx-metrics'
-        metrics_path: /metrics
+        metrics_path: '/metrics'
         kubernetes_sd_configs:
-          - role: endpoints
+          - role: 'endpoints'
         relabel_configs:
-          - source_labels: [__meta_kubernetes_service_name]
-            action: keep
-            regex: ingress-nginx-controller-metrics
-          - source_labels: [__meta_kubernetes_namespace]
-            action: keep
-            regex: ingress-nginx
-          - source_labels: [__meta_kubernetes_endpoint_port_name]
-            action: keep
-            regex: metrics-metrics
+          - source_labels: 
+            - '__meta_kubernetes_service_name'
+            action: 'keep'
+            regex: 'ingress-nginx-controller-metrics'
+          - source_labels: 
+            - '__meta_kubernetes_namespace'
+            action: 'keep'
+            regex: 'ingress-nginx'
+          - source_labels: 
+            - '__meta_kubernetes_endpoint_port_name'
+            action: 'keep'
+            regex: 'metrics-metrics'
       - job_name: 'sonarqube'
-        scrape_interval: 30s
+        scrape_interval: '15s'
         metrics_path: '/sonarqube/api/monitoring/metrics'
-        scheme: http
+        scheme: 'http'
         static_configs:
-          - targets: ['sonarqube-sonarqube.monitoring.svc.cluster.local:9000']
-        bearer_token: 'dummy'
+          - targets: 
+            - 'sonarqube-sonarqube.monitoring.svc.cluster.local:9000'
+        bearer_token: 'techchallenge-sonarqube-secret'
 
 grafana:
   enabled: false

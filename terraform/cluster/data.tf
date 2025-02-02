@@ -30,13 +30,13 @@ data "aws_iam_role" "lab_role" {
   name = "LabRole"
 }
 
-# data "aws_db_instance" "tc_order_db_instance" {
-#   db_instance_identifier = "tc-order-db"
-# }
+data "aws_db_instance" "tc_order_db_instance" {
+  db_instance_identifier = "tc-order-db"
+}
 
-# data "aws_db_instance" "tc_cook_db_instance" {
-#   db_instance_identifier = "tc-cook-db"
-# }
+data "aws_db_instance" "tc_cook_db_instance" {
+  db_instance_identifier = "tc-cook-db"
+}
 
 data "aws_db_instance" "sonarqube_db_instance" {
   db_instance_identifier = "sonarqube-db"

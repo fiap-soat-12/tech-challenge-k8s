@@ -27,4 +27,4 @@ metrics:
     enabled: true
     namespace: monitoring
 
-monitoringPasscode: "dummy"
+monitoringPasscode: "techchallenge-sonarqube-secret"
