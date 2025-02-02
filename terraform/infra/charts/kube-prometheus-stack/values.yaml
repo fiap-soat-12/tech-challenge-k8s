@@ -32,7 +32,14 @@ prometheus:
             regex: ingress-nginx
           - source_labels: [__meta_kubernetes_endpoint_port_name]
             action: keep
-            regex: metrics
+            regex: metrics-metrics
+      - job_name: 'sonarqube'
+        scrape_interval: 30s
+        metrics_path: '/sonarqube/api/monitoring/metrics'
+        scheme: http
+        static_configs:
+          - targets: ['sonarqube-sonarqube.monitoring.svc.cluster.local:9000']
+        bearer_token: 'dummy'
 
 grafana:
   enabled: false

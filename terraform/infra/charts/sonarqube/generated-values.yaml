@@ -1,0 +1,30 @@
+community:
+  enabled: true
+
+postgresql:
+  enabled: false
+
+jdbcOverwrite:
+  enabled: true
+  jdbcUrl: "jdbc:postgresql://sonarqube-db.cnyfuxzy0hi2.us-east-1.rds.amazonaws.com:5432/sonarqube"
+  jdbcUsername: "postgres"
+  jdbcPassword: "postgres"
+
+service:
+  type: ClusterIP
+  externalPort: 9000
+  internalPort: 9000
+
+ingress:
+  enabled: false
+
+sonarProperties:
+  sonar.web.context: "/sonarqube"
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    namespace: monitoring
+
+monitoringPasscode: "dummy"

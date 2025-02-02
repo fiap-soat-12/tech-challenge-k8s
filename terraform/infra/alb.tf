@@ -37,7 +37,7 @@ resource "aws_lb_target_group" "alb_target_group" {
 
   health_check {
     protocol            = "HTTP"
-    path                = "/api/actuator/health"
+    path                = "/healthz"
     port                = "30080"
     interval            = 30
     timeout             = 5
@@ -81,6 +81,22 @@ resource "aws_lb_listener_rule" "grafana_rule" {
   condition {
     path_pattern {
       values = ["/grafana*"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "sonarqube_rule" {
+  listener_arn = aws_lb_listener.alb_listener.arn
+  priority     = 2
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.alb_target_group.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/sonarqube*"]
     }
   }
 }
