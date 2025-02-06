@@ -1,9 +1,3 @@
-resource "kubernetes_namespace" "ingress_nginx_namespaces" {
-  metadata {
-    name = "ingress-nginx"
-  }
-}
-
 resource "helm_release" "nginx_ingress" {
   name       = "ingress-nginx"
   namespace  = kubernetes_namespace.ingress_nginx_namespaces.metadata[0].name

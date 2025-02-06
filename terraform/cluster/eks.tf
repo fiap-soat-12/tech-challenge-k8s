@@ -30,15 +30,6 @@ resource "aws_security_group_rule" "allow_app_to_order_instance_rds" {
   from_port                = 5432
   to_port                  = 5432
   protocol                 = "tcp"
-  security_group_id        = tolist(data.aws_db_instance.tc_order_db_instance.vpc_security_groups)[0]
-  source_security_group_id = aws_eks_cluster.eks_cluster.vpc_config[0].cluster_security_group_id
-}
-
-resource "aws_security_group_rule" "allow_app_to_cook_instance_rds" {
-  type                     = "ingress"
-  from_port                = 5432
-  to_port                  = 5432
-  protocol                 = "tcp"
-  security_group_id        = tolist(data.aws_db_instance.tc_cook_db_instance.vpc_security_groups)[0]
+  security_group_id        = data.aws_security_group.rds_security_group.id
   source_security_group_id = aws_eks_cluster.eks_cluster.vpc_config[0].cluster_security_group_id
 }

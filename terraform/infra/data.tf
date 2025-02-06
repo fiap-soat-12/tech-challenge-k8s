@@ -58,3 +58,7 @@ data "aws_ip_ranges" "api_gateway" {
   services = ["API_GATEWAY"]
   regions  = [var.aws_region]
 }
+
+data "aws_ssm_parameter" "sonarqube_rds_endpoint" {
+  name = "/fiap-tech-challenge/sonarqube-rds-endpoint"
+}

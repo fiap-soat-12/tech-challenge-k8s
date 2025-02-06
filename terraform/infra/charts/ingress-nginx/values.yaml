@@ -1,12 +1,13 @@
 controller:
   kind: DaemonSet
-  
+
   config:
     enable-access-log: "true"
     enable-snippet-annotations: "true"
     use-forwarded-headers: "true"
     enable-rewrite-log: "true"
     compute-full-forwarded-for: "true"
+    custom-http-errors: ""
 
   service:
     type: NodePort
@@ -24,3 +25,18 @@ controller:
         app: ingress-nginx
       type: ClusterIP
       port: 10254
+
+  extraArgs:
+    enable-ssl-passthrough: "true"
+
+  extraConfig:
+    http-snippet: |
+      server {
+        listen 8080;
+        location /healthz {
+          return 200 "OK";
+        }
+      }
+
+  addHeaders:
+    X-Health-Check: "OK"
