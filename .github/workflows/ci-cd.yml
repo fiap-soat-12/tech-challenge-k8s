@@ -75,7 +75,7 @@ jobs:
 
   # Job para verificação do terraform do infra em pull requests e merge para a main e push para EKS na main 
   infra:
-    name: Terraform Verification and Push Infrastructureand to Cluster
+    name: Terraform Verification and Push Infrastructure and to Cluster
     runs-on: ubuntu-latest
 
     needs: cluster
