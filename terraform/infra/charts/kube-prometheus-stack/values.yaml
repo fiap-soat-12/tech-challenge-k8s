@@ -24,24 +24,6 @@ prometheus:
             regex: 'tech-challenge-cook-api-service'
             target_label: '__metrics_path__'
             replacement: '/cook/metrics'
-      # - job_name: 'tech-challenge-payment-api'
-      #   scrape_interval: '15s'
-      #   static_configs:
-      #     - targets: 
-      #       - 'tech-challenge-payment-api-service.payment.svc.cluster.local:8100'
-      #   metrics_path: '/payment/actuator/prometheus'
-      # - job_name: 'tech-challenge-order-api'
-      #   scrape_interval: '15s'
-      #   static_configs:
-      #     - targets: 
-      #       - 'tech-challenge-order-api-service.order.svc.cluster.local:8357'
-      #   metrics_path: '/order/actuator/prometheus'
-      # - job_name: 'tech-challenge-cook-api'
-      #   scrape_interval: '15s'
-      #   static_configs:
-      #     - targets: 
-      #       - 'tech-challenge-cook-api-service.cook.svc.cluster.local:9100'
-        # metrics_path: '/cook/actuator/prometheus'
       - job_name: 'ingress-nginx-metrics'
         metrics_path: '/metrics'
         kubernetes_sd_configs:
