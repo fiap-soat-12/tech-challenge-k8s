@@ -2,10 +2,10 @@
 
 # Tech Challenge - k8s
 
-![GitHub Release Date](https://img.shields.io/badge/Release%20Date-Dezembro%202024-yellowgreen)
+![GitHub Release Date](https://img.shields.io/badge/Release%20Date-Fevereiro%202025-yellowgreen)
 ![](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellowgreen)
 <br>
-![](https://img.shields.io/badge/Version-%20v1.0.0-brightgreen)
+![](https://img.shields.io/badge/Version-%20v2.0.0-brightgreen)
 </div>
 
 ## 💻 Descrição
@@ -27,9 +27,12 @@ Este repositório é responsável por criar o cluster e toda a infraestrutura ne
 
 ### Pré-requisitos
 
-1. É necessário executar a pipeline para criar o VPC no repositório: https://github.com/fiap-soat-12/fiap-soat-tech-challenge-vpc
-2. É necessário executar a pipeline para criar o RDS no repositório: https://github.com/fiap-soat-12/fiap-soat-tech-challenge-db
-3. É necessário executar a pipeline para criar a imagem no ECR no repositório: https://github.com/fiap-soat-12/fiap-soat-tech-challenge-api
+1. É necessário executar a pipeline para criar o VPC no repositório: https://github.com/fiap-soat-12/tech-challenge-vpc
+2. É necessário executar a pipeline para criar o RDS no repositório: https://github.com/fiap-soat-12/tech-challenge-db
+3. É necessário executar a pipeline para criar o SQS no repositório: https://github.com/fiap-soat-12/tech-challenge-queue
+4. É necessário executar a pipeline para criar a imagem no ECR no repositório e a Infraestrutura da Cook API: https://github.com/fiap-soat-12/tech-challenge-cook-api
+5. É necessário executar a pipeline para criar a imagem no ECR no repositório e a Infraestrutura da Order API: https://github.com/fiap-soat-12/tech-challenge-order-api
+6. É necessário executar a pipeline para criar a imagem no ECR no repositório e a Infraestrutura da Payment API: https://github.com/fiap-soat-12/tech-challenge-payment-api
 
 ### Desenvolvimento
 
@@ -40,7 +43,7 @@ Este repositório é responsável por criar o cluster e toda a infraestrutura ne
 
 ### Desenho da infraestrutura
 
-![eks-cluster](./assets/infra-diagram.png)
+![eks-cluster](./assets/infra-diagram.drawio.svg)
 
 ## 🚀 Execução
 
