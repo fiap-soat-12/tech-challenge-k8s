@@ -1,24 +1,29 @@
 prometheus:
   prometheusSpec:
     additionalScrapeConfigs:
-      - job_name: 'tech-challenge-payment-app'
+      - job_name: 'tech-challenge-microservices'
         scrape_interval: '15s'
-        static_configs:
-          - targets: 
-            - 'tech-challenge-payment-app-service.payment.svc.cluster.local:8100'
-        metrics_path: '/payment/actuator/prometheus'
-      - job_name: 'tech-challenge-order-app'
-        scrape_interval: '15s'
-        static_configs:
-          - targets: 
-            - 'tech-challenge-order-app-service.order.svc.cluster.local:8200'
-        metrics_path: '/order/actuator/prometheus'
-      - job_name: 'tech-challenge-cook-app'
-        scrape_interval: '15s'
-        static_configs:
-          - targets: 
-            - 'tech-challenge-cook-app-service.cook.svc.cluster.local:8100'
-        metrics_path: '/cook/actuator/prometheus'
+        kubernetes_sd_configs:
+          - role: 'endpoints'
+        relabel_configs:
+          - source_labels: ['__meta_kubernetes_service_name']
+            action: 'keep'
+            regex: 'tech-challenge-(cook|payment|order)-api-service'
+          - source_labels: ['__meta_kubernetes_service_name']
+            target_label: '__metrics_path__'
+            replacement: '/actuator/prometheus'
+          - source_labels: ['__meta_kubernetes_service_name']
+            regex: 'tech-challenge-payment-api-service'
+            target_label: '__metrics_path__'
+            replacement: '/payment/actuator/prometheus'
+          - source_labels: ['__meta_kubernetes_service_name']
+            regex: 'tech-challenge-order-api-service'
+            target_label: '__metrics_path__'
+            replacement: '/order/actuator/prometheus'
+          - source_labels: ['__meta_kubernetes_service_name']
+            regex: 'tech-challenge-cook-api-service'
+            target_label: '__metrics_path__'
+            replacement: '/cook/metrics'
       - job_name: 'ingress-nginx-metrics'
         metrics_path: '/metrics'
         kubernetes_sd_configs:
