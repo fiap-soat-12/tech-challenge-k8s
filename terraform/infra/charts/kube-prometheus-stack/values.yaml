@@ -29,18 +29,15 @@ prometheus:
         kubernetes_sd_configs:
           - role: 'endpoints'
         relabel_configs:
-          - source_labels: 
-            - '__meta_kubernetes_service_name'
+          - source_labels: ['__meta_kubernetes_service_name']
             action: 'keep'
             regex: 'ingress-nginx-controller-metrics'
-          - source_labels: 
-            - '__meta_kubernetes_namespace'
+          - source_labels: ['__meta_kubernetes_namespace']
             action: 'keep'
             regex: 'ingress-nginx'
-          - source_labels: 
-            - '__meta_kubernetes_endpoint_port_name'
+          - source_labels: ['__meta_kubernetes_endpoint_port_name']
             action: 'keep'
-            regex: 'metrics-metrics'
+            regex: 'metrics'
       - job_name: 'sonarqube'
         scrape_interval: '15s'
         metrics_path: '/sonarqube/api/monitoring/metrics'
