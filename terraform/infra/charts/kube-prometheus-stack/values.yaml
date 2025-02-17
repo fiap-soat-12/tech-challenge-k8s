@@ -23,7 +23,7 @@ prometheus:
           - source_labels: ['__meta_kubernetes_service_name']
             regex: 'tech-challenge-cook-api-service'
             target_label: '__metrics_path__'
-            replacement: '/cook/metrics'
+            replacement: '/cook/v1/metrics'
       - job_name: 'ingress-nginx-metrics'
         metrics_path: '/metrics'
         kubernetes_sd_configs:
