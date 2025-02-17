@@ -43,7 +43,7 @@ Este repositório é responsável por criar o cluster e toda a infraestrutura ne
 
 ### Desenho da infraestrutura
 
-![eks-cluster](./assets/infra-diagram.drawio.svg)
+![eks-cluster](./assets/infra-diagram.drawio.png)
 
 ## 🚀 Execução
 
